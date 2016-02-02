@@ -1,7 +1,8 @@
 #!/bin/bash
 NGINX_VHOSTS=${NGINX_VHOSTS:-/data/vhosts}
 
-cp ${DATA_ROOT}/${NGINX_VHOSTS} /etc/nginx/sites-available/
+rm /etc/nginx/sites-available/* /etc/nginx/sites-enabled/*
+cp $NGINX_VHOSTS /etc/nginx/sites-available/
 ln -s /etc/nginx/sites-available/*.conf /etc/nginx/sites-enabled/
 
 #iterate though all the env vars and replace %ENV% with the value
