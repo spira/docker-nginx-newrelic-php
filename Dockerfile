@@ -11,8 +11,14 @@ RUN apt-get update && \
     libpq-dev \
     libmcrypt-dev \
     libxml2-dev \
+    libyaml-dev \
     python-pip \
-    nginx
+    python-dev \
+    wget \
+    nginx \
+    --no-install-recommends && \
+    rm -r /var/lib/apt/lists/* && \
+    apt-get purge -y --auto-remove
 
 RUN pip install --upgrade supervisor supervisor-stdout
 
@@ -21,9 +27,24 @@ RUN docker-php-ext-install mcrypt pdo_pgsql mbstring pdo_mysql sockets opcache s
 RUN pecl install xdebug-beta && \
     docker-php-ext-enable xdebug
 
+# Install new relic
+RUN mkdir -p /opt/newrelic
+WORKDIR /opt/newrelic
+RUN wget -r -nd --no-parent -Alinux.tar.gz \
+	http://download.newrelic.com/php_agent/release/ >/dev/null 2>&1 \
+	&& tar -xzf newrelic-php*.tar.gz --strip=1
+ENV NR_INSTALL_SILENT true
+ENV NR_INSTALL_PHPLIST /usr/local/bin/
+RUN bash newrelic-install install
+WORKDIR /
+RUN pip install newrelic-plugin-agent
+RUN mkdir -p /var/log/newrelic
+RUN mkdir -p /var/run/newrelic
+
 # Configure php
 ADD config/memory.ini /opt/etc/memory.ini
 ADD config/xdebug.ini /opt/etc/xdebug.ini
+ADD config/newrelic.ini /opt/etc/newrelic.ini
 
 RUN cat /opt/etc/memory.ini >> /usr/local/etc/php/conf.d/memory.ini
 
