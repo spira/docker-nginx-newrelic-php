@@ -3,6 +3,10 @@
 if [ "$XDEBUG_ENABLED" = true && "$NEWRELIC_ENABLED" -ne true]; then
     echo "XDebug enabled.."
     cat /opt/etc/xdebug.ini >> /usr/local/etc/php/conf.d/xdebug.ini
+else
+    # turn off xdebug extension altogether - if we have it disabled, let's disable
+    mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disabled
+
 fi
 
 
