@@ -41,6 +41,9 @@ RUN pip install newrelic-plugin-agent
 RUN mkdir -p /var/log/newrelic
 RUN mkdir -p /var/run/newrelic
 
+# disable New Relic by default (allows enable by ENV VAR at runtime)
+RUN mv /usr/local/etc/php/conf.d/newrelic.ini /usr/local/etc/php/conf.d/newrelic.ini.dist
+
 # Configure php
 ADD config/memory.ini /opt/etc/memory.ini
 ADD config/xdebug.ini /opt/etc/xdebug.ini
