@@ -16,13 +16,21 @@ RUN apt-get update && \
     python-dev \
     wget \
     nginx \
+    libfreetype6 \
+    libjpeg62-turbo \
+    libmcrypt4 \
+    libpng12-0 \
+    libfreetype6-dev \
+    libjpeg-dev \
+    libpng12-dev \
     --no-install-recommends && \
     rm -r /var/lib/apt/lists/* && \
     apt-get purge -y --auto-remove
 
 RUN pip install --upgrade supervisor supervisor-stdout
 
-RUN docker-php-ext-install mcrypt pdo_pgsql mbstring pdo_mysql sockets opcache soap
+RUN docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr
+RUN docker-php-ext-install mcrypt gd pdo_pgsql mbstring pdo_mysql sockets opcache soap
 
 RUN pecl install xdebug-beta && \
     docker-php-ext-enable xdebug
