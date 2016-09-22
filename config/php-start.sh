@@ -10,7 +10,6 @@ else
 
 fi
 
-
 if [ $NEWRELIC_ENABLED = 'true' ]; then
     echo "Enabling New Relic.."
     cat /opt/etc/newrelic.ini > /usr/local/etc/php/conf.d/newrelic.ini
@@ -22,5 +21,8 @@ if [ $NEWRELIC_ENABLED = 'true' ]; then
         mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disabled
     fi
 fi
+
+# Update pm.max_children setting in www.conf
+sed -i -- 's/pm.max_children = 5/pm.max_children = 20/g' /usr/local/etc/php-fpm.d/www.conf
 
 exec php-fpm
